@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat App</title>
+  </head>
+  <body>
+    <h1>Chat App</h1>
+    <div id="chatContainer"></div>
+    <form id="chatForm">
+      <input type="text" id="userInput" placeholder="Your input" />
+      <button type="submit">Send</button>
+    </form>
+
+    <script>
+      const chatForm = document.getElementById("chatForm");
+      const userInput = document.getElementById("userInput");
+      const chatContainer = document.getElementById("chatContainer");
+
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const user_input = userInput.value;
+        const responseContainer = document.createElement("div");
+        responseContainer.classList.add("response");
+        responseContainer.textContent = `You: ${user_input}`;
+
+        chatContainer.appendChild(responseContainer);
+
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_input }),
+        });
+
+        const data = await response.json();
+        const completion_text = data.response;
+
+        const aiResponseContainer = document.createElement("div");
+        aiResponseContainer.classList.add("response");
+        aiResponseContainer.textContent = `AI: ${completion_text}`;
+
+        chatContainer.appendChild(aiResponseContainer);
+
+        userInput.value = "";
+      });
+    </script>
+
+    <style>
+      .response {
+        margin-bottom: 10px;
+      }
+    </style>
+  </body>
+</html>
